@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Petloop | Plataforma para mascotas</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #08090c;
+      --bg2: #101118;
+      --card: rgba(18,18,25,0.94);
+      --card2: rgba(24,24,33,0.98);
+      --text: #f7f7fb;
+      --muted: #b7b7c5;
+      --gold: #d4af37;
+      --gold2: #f0d978;
+      --border: rgba(255,255,255,0.08);
+      --soft: rgba(255,255,255,0.03);
+      --success: #7ee0a2;
+      --danger: #ff8787;
+      --shadow: 0 20px 60px rgba(0,0,0,0.35);
+      --radius: 24px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(212,175,55,0.08), transparent 28%),
+        radial-gradient(circle at top right, rgba(212,175,55,0.05), transparent 22%),
+        linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input, select, textarea { font: inherit; }
+    .hidden { display: none !important; }
+
+    .container {
+      width: min(1160px, 92%);
+      margin: 0 auto;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(8,9,12,0.78);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      padding: 18px 0;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .logo-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      color: #111;
+      font-weight: 800;
+      box-shadow: 0 12px 24px rgba(212,175,55,0.2);
+    }
+
+    .logo-text b { color: var(--gold); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: none;
+      cursor: pointer;
+      border-radius: 16px;
+      padding: 14px 20px;
+      font-weight: 700;
+      transition: 0.2s ease;
+      min-height: 48px;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      color: #111;
+      box-shadow: 0 12px 28px rgba(212,175,55,0.22);
+    }
+
+    .btn-secondary {
+      background: var(--soft);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .hero {
+      padding: 90px 0 70px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(212,175,55,0.24);
+      background: rgba(212,175,55,0.1);
+      color: var(--gold2);
+      font-size: 0.88rem;
+      margin-bottom: 18px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 5vw, 4.7rem);
+      line-height: 1.02;
+      margin-bottom: 18px;
+      letter-spacing: -1.2px;
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 1.06rem;
+      max-width: 650px;
+      margin-bottom: 26px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .hero-mini {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .hero-mini span {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: var(--soft);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    section { padding: 76px 0; }
+
+    .section-title {
+      text-align: center;
+      font-size: 2.25rem;
+      margin-bottom: 14px;
+      letter-spacing: -0.8px;
+    }
+
+    .section-subtitle {
+      max-width: 760px;
+      margin: 0 auto 40px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .card {
+      background: linear-gradient(180deg, var(--card) 0%, var(--card2) 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card,
+    .feature-card,
+    .plan-card,
+    .form-card,
+    .portal-info,
+    .logo-card,
+    .dashboard-card {
+      padding: 24px;
+    }
+
+    .hero-card h3,
+    .feature-card h3,
+    .plan-card h3,
+    .form-card h3,
+    .portal-info h3,
+    .dashboard-card h3 {
+      margin-bottom: 10px;
+      font-size: 1.18rem;
+    }
+
+    .hero-card p,
+    .feature-card p,
+    .plan-card p,
+    .form-card p,
+    .portal-info p,
+    .logo-card p,
+    .dashboard-card p {
+      color: var(--muted);
+    }
+
+    .hero-card ul,
+    .plan-list,
+    .schedule-list,
+    .dashboard-list {
+      list-style: none;
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .hero-card li,
+    .plan-list li,
+    .schedule-item,
+    .dashboard-list li {
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: var(--soft);
+      border: 1px solid rgba(255,255,255,0.05);
+      color: var(--muted);
+    }
+
+    .features,
+    .plans,
+    .logos-grid,
+    .portal-grid,
+    .dashboard-grid,
+    .stats-grid {
+      display: grid;
+      gap: 22px;
+    }
+
+    .features { grid-template-columns: repeat(3, 1fr); }
+    .plans { grid-template-columns: repeat(3, 1fr); }
+    .logos-grid { grid-template-columns: repeat(4, 1fr); }
+    .portal-grid { grid-template-columns: 1.1fr 0.9fr; align-items: start; }
+    .dashboard-grid { grid-template-columns: 1.1fr 0.9fr; align-items: start; }
+    .stats-grid { grid-template-columns: repeat(4, 1fr); }
+
+    .plan-card { position: relative; display: flex; flex-direction: column; }
+    .plan-card.popular { border-color: rgba(212,175,55,0.4); transform: translateY(-6px); }
+
+    .popular-tag {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      color: #111;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .price {
+      font-size: 2.15rem;
+      font-weight: 700;
+      margin: 12px 0 6px;
+    }
+
+    .price small {
+      color: var(--muted);
+      font-size: 0.95rem;
+      font-weight: 400;
+    }
+
+    .plan-list { flex: 1; }
+
+    form {
+      display: grid;
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .two {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 15px 16px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: #0e0f14;
+      color: white;
+      outline: none;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: rgba(212,175,55,0.45);
+      box-shadow: 0 0 0 3px rgba(212,175,55,0.08);
+    }
+
+    textarea { min-height: 120px; resize: vertical; }
+
+    .note,
+    .portal-note,
+    .security-note {
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: rgba(212,175,55,0.08);
+      border: 1px solid rgba(212,175,55,0.14);
+      color: var(--muted);
+      margin-top: 18px;
+    }
+
+    .status-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(126,224,162,0.08);
+      border: 1px solid rgba(126,224,162,0.14);
+      color: var(--success);
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 14px;
+    }
+
+    .logo-card {
+      min-height: 170px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      gap: 12px;
+    }
+
+    .logo-box {
+      width: 100%;
+      height: 82px;
+      border-radius: 18px;
+      border: 1px dashed rgba(212,175,55,0.28);
+      background: rgba(212,175,55,0.04);
+      display: grid;
+      place-items: center;
+      color: var(--gold2);
+      font-weight: 700;
+      overflow: hidden;
+    }
+
+    .logo-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .stats-grid .dashboard-card {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-top: 10px;
+    }
+
+    .footer {
+      padding: 28px 0 40px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .ally-preview {
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 18px;
+      background: var(--soft);
+      border: 1px solid var(--border);
+    }
+
+    .dashboard-tags {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .tag {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    #messageBox {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      background: #12131a;
+      border: 1px solid var(--border);
+      color: white;
+      padding: 14px 16px;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      max-width: 320px;
+      z-index: 200;
+      display: none;
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .features,
+      .plans,
+      .logos-grid,
+      .portal-grid,
+      .dashboard-grid,
+      .stats-grid,
+      .two {
+        grid-template-columns: 1fr;
+      }
+
+      .nav {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .nav-links {
+        width: 100%;
+      }
+
+      .plan-card.popular {
+        transform: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <a href="#inicio" class="logo">
+        <span class="logo-mark">P</span>
+        <span class="logo-text">Pet<b>loop</b></span>
+      </a>
+      <nav class="nav-links">
+        <a href="#beneficios">Beneficios</a>
+        <a href="#planes">Planes</a>
+        <a href="#clientes">Agendar cita</a>
+        <a href="#plan-paciente">Plan paciente</a>
+        <a href="#aliados-publicos">Nuestros aliados</a>
+        <a href="#portal-aliados">Portal aliados</a>
+        <a href="#admin">Administrador</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="inicio">
+      <div class="container hero-grid">
+        <div>
+          <div class="badge">Plataforma premium para mascotas</div>
+          <h1>Clientes, aliados y seguimiento en una sola web.</h1>
+          <p>
+            Petloop reúne planes, solicitud de citas, plan paciente, una vitrina de aliados y accesos separados para aliados y administración.
+          </p>
+          <div class="hero-actions">
+            <a href="#clientes" class="btn btn-primary">Agendar cita</a>
+            <a href="#aliados-publicos" class="btn btn-secondary">Ver aliados</a>
+          </div>
+          <div class="hero-mini">
+            <span>Clientes</span>
+            <span>Aliados</span>
+            <span>Agenda</span>
+            <span>Plan paciente</span>
+          </div>
+        </div>
+
+        <div class="card hero-card">
+          <h3>Qué incluye esta base completa</h3>
+          <ul>
+            <li>Landing pública con planes y contacto.</li>
+            <li>Formulario de citas para clientes.</li>
+            <li>Formulario para plan paciente.</li>
+            <li>Sección pública de aliados con espacio para logos.</li>
+            <li>Portal privado visual para aliados.</li>
+            <li>Panel visual de administrador.</li>
+            <li>Conexión lista para Firebase.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="beneficios">
+      <div class="container">
+        <h2 class="section-title">Cómo se divide el sistema</h2>
+        <p class="section-subtitle">
+          La parte pública sirve para atraer clientes. La privada sirve para aliados y administración. La base de datos luego guarda citas, pacientes y usuarios.
+        </p>
+        <div class="features">
+          <div class="card feature-card">
+            <h3>Clientes</h3>
+            <p>Ven los planes, conocen aliados y solicitan citas o seguimiento para su mascota.</p>
+          </div>
+          <div class="card feature-card">
+            <h3>Aliados</h3>
+            <p>Ingresan a un espacio separado para revisar solicitudes, clientes y disponibilidad.</p>
+          </div>
+          <div class="card feature-card">
+            <h3>Administrador</h3>
+            <p>Controla aliados, métricas, solicitudes y el crecimiento de la red desde un panel central.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="planes">
+      <div class="container">
+        <h2 class="section-title">Planes y precios</h2>
+        <p class="section-subtitle">
+          Esta parte es pública y sirve para que cualquier persona entienda la propuesta de valor de Petloop.
+        </p>
+        <div class="plans">
+          <div class="card plan-card">
+            <h3>Petloop Core</h3>
+            <p>Una entrada clara y funcional para clientes nuevos.</p>
+            <div class="price">₡18.000 <small>/ mes</small></div>
+            <ul class="plan-list">
+              <li>1 cita veterinaria de cortesía</li>
+              <li>Hasta 10% de descuento en medicamentos</li>
+              <li>Promociones con aliados</li>
+              <li>Soporte básico</li>
+            </ul>
+            <a href="#clientes" class="btn btn-secondary">Solicitar</a>
+          </div>
+
+          <div class="card plan-card popular">
+            <div class="popular-tag">Más elegido</div>
+            <h3>Petloop Plus</h3>
+            <p>La opción más atractiva para una experiencia más completa.</p>
+            <div class="price">₡30.000 <small>/ mes</small></div>
+            <ul class="plan-list">
+              <li>Incluye beneficios del plan Core</li>
+              <li>Transporte al veterinario</li>
+              <li>1 regalía de grooming</li>
+              <li>Prioridad con aliados</li>
+            </ul>
+            <a href="#clientes" class="btn btn-primary">Solicitar</a>
+          </div>
+
+          <div class="card plan-card">
+            <h3>Petloop Elite</h3>
+            <p>Una referencia premium para servicios más exclusivos.</p>
+            <div class="price">Desde ₡45.000 <small>/ mes</small></div>
+            <ul class="plan-list">
+              <li>Beneficios ampliados</li>
+              <li>Atención preferencial</li>
+              <li>Más cobertura según zona</li>
+              <li>Aliados especiales</li>
+            </ul>
+            <a href="#clientes" class="btn btn-secondary">Consultar</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="clientes">
+      <div class="container">
+        <h2 class="section-title">Agenda una cita</h2>
+        <p class="section-subtitle">
+          Este formulario está hecho para clientes. Si conectas Firebase, guardará la cita en la base de datos.
+        </p>
+
+        <div class="portal-grid">
+          <div class="card form-card">
+            <h3>Formulario de cita</h3>
+            <p>Solicita una atención para tu mascota.</p>
+            <form id="appointmentForm">
+              <div class="two">
+                <input type="text" id="clientName" placeholder="Nombre del cliente" required>
+                <input type="text" id="petName" placeholder="Nombre de la mascota" required>
+              </div>
+              <div class="two">
+                <input type="tel" id="clientPhone" placeholder="Teléfono" required>
+                <input type="email" id="clientEmail" placeholder="Correo electrónico" required>
+              </div>
+              <div class="two">
+                <select id="serviceType" required>
+                  <option value="">Tipo de servicio</option>
+                  <option>Consulta veterinaria</option>
+                  <option>Grooming</option>
+                  <option>Entrenamiento</option>
+                  <option>Hotel / guardería</option>
+                  <option>Paseo</option>
+                  <option>Fisioterapia</option>
+                </select>
+                <input type="date" id="appointmentDate" required>
+              </div>
+              <div class="two">
+                <input type="time" id="appointmentTime" required>
+                <select id="preferredAlly" required>
+                  <option value="">Aliado preferido</option>
+                  <option>Clínica ejemplo</option>
+                  <option>Grooming ejemplo</option>
+                  <option>Entrenador ejemplo</option>
+                  <option>Hotel ejemplo</option>
+                </select>
+              </div>
+              <textarea id="appointmentNotes" placeholder="Notas importantes sobre tu mascota"></textarea>
+              <button class="btn btn-primary" type="submit">Solicitar cita</button>
+            </form>
+          </div>
+
+          <div class="card portal-info">
+            <h3>Flujo ideal</h3>
+            <p>Así se movería la información cuando lo conectes a Firebase:</p>
+            <div class="schedule-list">
+              <div class="schedule-item">1. El cliente envía la solicitud.</div>
+              <div class="schedule-item">2. La cita se guarda en Firestore.</div>
+              <div class="schedule-item">3. El aliado la ve en su panel.</div>
+              <div class="schedule-item">4. El admin puede revisar todo.</div>
+              <div class="schedule-item">5. Luego puedes agregar confirmación por WhatsApp o correo.</div>
+            </div>
+            <div class="note">Si Firebase no está configurado, el formulario mostrará una demo local.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="plan-paciente">
+      <div class="container">
+        <h2 class="section-title">Plan paciente y expediente médico</h2>
+        <p class="section-subtitle">
+          Esta sección permite registrar la información completa de la mascota, su historial clínico y el seguimiento médico dentro de Petloop.
+        </p>
+
+        <div class="portal-grid">
+          <div class="card form-card">
+            <h3>Expediente completo</h3>
+            <p>Guarda aquí la información importante de cada mascota.</p>
+            <form id="carePlanForm">
+              <div class="two">
+                <input type="text" id="cpClientName" placeholder="Nombre del dueño" required>
+                <input type="text" id="cpPetName" placeholder="Nombre de la mascota" required>
+              </div>
+
+              <div class="two">
+                <input type="text" id="cpSpecies" placeholder="Especie (perro, gato, etc.)" required>
+                <input type="text" id="cpBreed" placeholder="Raza">
+              </div>
+
+              <div class="two">
+                <input type="number" id="cpAge" placeholder="Edad">
+                <input type="text" id="cpWeight" placeholder="Peso">
+              </div>
+
+              <div class="two">
+                <input type="text" id="cpColor" placeholder="Color o señas particulares">
+                <input type="text" id="cpSex" placeholder="Sexo">
+              </div>
+
+              <div class="two">
+                <input type="text" id="cpAllergies" placeholder="Alergias">
+                <input type="text" id="cpChronic" placeholder="Enfermedades crónicas">
+              </div>
+
+              <textarea id="cpVaccines" placeholder="Vacunas aplicadas"></textarea>
+              <textarea id="cpExamResults" placeholder="Resultados de exámenes"></textarea>
+              <textarea id="cpRadiology" placeholder="Radiografías / imágenes / hallazgos"></textarea>
+              <textarea id="cpDiagnosis" placeholder="Diagnóstico"></textarea>
+              <textarea id="cpTreatment" placeholder="Tratamiento indicado"></textarea>
+              <textarea id="cpMeds" placeholder="Pastillas, medicamentos o suplementos necesarios"></textarea>
+              <textarea id="cpFood" placeholder="Plan de alimentación"></textarea>
+              <textarea id="cpNotes" placeholder="Observaciones generales"></textarea>
+
+              <div class="two">
+                <input type="date" id="cpNextVisit" required>
+                <input type="text" id="cpStatus" placeholder="Estado actual del paciente">
+              </div>
+
+              <button class="btn btn-primary" type="submit">Guardar expediente</button>
+            </form>
+          </div>
+
+          <div class="card portal-info">
+            <h3>Vista rápida del expediente</h3>
+            <div class="schedule-list" id="carePlanPreview">
+              <div class="schedule-item">Dueño: —</div>
+              <div class="schedule-item">Mascota: —</div>
+              <div class="schedule-item">Especie: —</div>
+              <div class="schedule-item">Raza: —</div>
+              <div class="schedule-item">Edad: —</div>
+              <div class="schedule-item">Peso: —</div>
+              <div class="schedule-item">Alergias: —</div>
+              <div class="schedule-item">Vacunas: —</div>
+              <div class="schedule-item">Resultados de exámenes: —</div>
+              <div class="schedule-item">Radiografías / imágenes: —</div>
+              <div class="schedule-item">Diagnóstico: —</div>
+              <div class="schedule-item">Tratamiento: —</div>
+              <div class="schedule-item">Medicamentos: —</div>
+              <div class="schedule-item">Próxima revisión: —</div>
+              <div class="schedule-item">Estado actual: —</div>
+            </div>
+            <div class="note">Cuando lo conectes a Firebase, cada expediente se guardará dentro de una colección como <strong>medicalRecords</strong> o <strong>carePlans</strong>.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="aliados-publicos">
+      <div class="container">
+        <h2 class="section-title">Nuestros aliados</h2>
+        <p class="section-subtitle">
+          Esta sección es pública. Dejé espacios listos para que luego pongas aquí los logos que me envíes.
+        </p>
+
+        <div class="logos-grid">
+          <div class="card logo-card">
+            <div class="logo-box" id="logoBox1">Logo 1</div>
+            <p>Nombre del aliado</p>
+          </div>
+          <div class="card logo-card">
+            <div class="logo-box" id="logoBox2">Logo 2</div>
+            <p>Nombre del aliado</p>
+          </div>
+          <div class="card logo-card">
+            <div class="logo-box" id="logoBox3">Logo 3</div>
+            <p>Nombre del aliado</p>
+          </div>
+          <div class="card logo-card">
+            <div class="logo-box" id="logoBox4">Logo 4</div>
+            <p>Nombre del aliado</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="portal-aliados">
+      <div class="container">
+        <h2 class="section-title">Portal privado para aliados</h2>
+        <p class="section-subtitle">
+          Esta parte no debe ser pública en una versión real. Aquí está la base visual y la lógica para conectarla con Firebase Authentication.
+        </p>
+
+        <div class="portal-grid">
+          <div class="card form-card">
+            <div class="status-chip">Acceso de aliado</div>
+            <h3>Login de aliados</h3>
+            <p>Solo los aliados autorizados deberían poder entrar con correo y contraseña.</p>
+            <form id="allyLoginForm">
+              <input type="email" id="allyEmail" placeholder="Correo del aliado" required>
+              <input type="password" id="allyPassword" placeholder="Contraseña" required>
+              <button class="btn btn-primary" type="submit">Iniciar sesión</button>
+            </form>
+
+            <div class="note">
+              Cuando actives Firebase Authentication, este login ya podrá funcionar con usuarios reales.
+            </div>
+
+            <hr style="border:none; border-top:1px solid rgba(255,255,255,0.08); margin:20px 0;">
+
+            <h3>Crear usuario aliado</h3>
+            <p>Este formulario te sirve para registrar aliados nuevos dentro del sistema.</p>
+            <form id="allyRegisterForm">
+              <input type="text" id="registerAllyName" placeholder="Nombre del aliado o negocio" required>
+              <input type="email" id="registerAllyEmail" placeholder="Correo del aliado" required>
+              <input type="password" id="registerAllyPassword" placeholder="Contraseña" required>
+              <button class="btn btn-secondary" type="submit">Crear cuenta de aliado</button>
+            </form>
+
+            <div class="security-note">
+              Sin Firebase Auth esto no queda privado de verdad. Con Firebase, el login sí puede volverse real y seguro.
+            </div>
+          </div>
+
+          <div class="card portal-info">
+            <h3>Vista rápida del panel aliado</h3>
+            <p>Al entrar, el aliado podría ver algo así:</p>
+            <div class="ally-preview" id="allyPreview">
+              <div class="dashboard-tags">
+                <span class="tag">Solicitudes nuevas</span>
+                <span class="tag">Clientes activos</span>
+                <span class="tag">Disponibilidad</span>
+                <span class="tag">Expedientes médicos</span>
+              </div>
+              <div class="schedule-list">
+                <div class="schedule-item">Cita pendiente — Luna — Grooming — 10:30 a.m.</div>
+                <div class="schedule-item">Cita confirmada — Max — Veterinaria — 1:00 p.m.</div>
+                <div class="schedule-item">Expediente actualizado — Rocky — Diagnóstico agregado.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="admin">
+      <div class="container">
+        <h2 class="section-title">Panel de administrador</h2>
+        <p class="section-subtitle">
+          Este espacio es para ti. Desde aquí puedes revisar métricas, aliados, citas y el crecimiento general del sistema.
+        </p>
+
+        <div class="stats-grid">
+          <div class="card dashboard-card">
+            <h3>Aliados</h3>
+            <div class="stat-value" id="statAllies">12</div>
+          </div>
+          <div class="card dashboard-card">
+            <h3>Citas</h3>
+            <div class="stat-value" id="statAppointments">34</div>
+          </div>
+          <div class="card dashboard-card">
+            <h3>Planes paciente</h3>
+            <div class="stat-value" id="statCarePlans">9</div>
+          </div>
+          <div class="card dashboard-card">
+            <h3>Solicitudes nuevas</h3>
+            <div class="stat-value" id="statPending">5</div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid" style="margin-top: 22px;">
+          <div class="card dashboard-card">
+            <h3>Actividad reciente</h3>
+            <ul class="dashboard-list" id="adminRecentList">
+              <li>Nueva cita solicitada por cliente.</li>
+              <li>Nuevo plan paciente guardado.</li>
+              <li>Aliado nuevo pendiente de aprobación.</li>
+              <li>Cliente consultó por plan Plus.</li>
+            </ul>
+          </div>
+
+          <div class="card dashboard-card">
+            <h3>Acciones rápidas</h3>
+            <p>Estas acciones se pueden conectar después con la base de datos real.</p>
+            <div class="schedule-list">
+              <div class="schedule-item">Aprobar aliado</div>
+              <div class="schedule-item">Ver solicitudes pendientes</div>
+              <div class="schedule-item">Exportar citas</div>
+              <div class="schedule-item">Revisar planes paciente</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">© 2026 Petloop. Proyecto base completo para crecer con Firebase.</div>
+  </footer>
+
+  <div id="messageBox"></div>
+
+  <script type="module">
+    // ==========================
+    // 1) CONFIGURA FIREBASE AQUÍ
+    // ==========================
+    // Reemplaza estos datos por los reales de tu proyecto Firebase.
+    // Si los dejas vacíos, la página funcionará en modo demo local.
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAFfEvk_v6Fx4sQIHPDXbylZt7HLPvv-pI",
+  authDomain: "petloop-e9ff5.firebaseapp.com",
+  projectId: "petloop-e9ff5",
+  storageBucket: "petloop-e9ff5.firebasestorage.app",
+  messagingSenderId: "99606843307",
+  appId: "1:99606843307:web:26ea5338c1f2692e62ccee"
+};
+
+    let app = null;
+    let auth = null;
+    let db = null;
+    let firebaseEnabled = false;
+
+    function showMessage(message) {
+      const box = document.getElementById('messageBox');
+      box.textContent = message;
+      box.style.display = 'block';
+      setTimeout(() => {
+        box.style.display = 'none';
+      }, 3500);
+    }
+
+    function hasFirebaseConfig(cfg) {
+      return cfg.apiKey && cfg.authDomain && cfg.projectId && cfg.appId;
+    }
+
+    async function initFirebase() {
+      if (!hasFirebaseConfig(firebaseConfig)) {
+        console.log('Firebase no configurado. Modo demo activo.');
+        return;
+      }
+
+      try {
+        const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js');
+        const authModule = await import('https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js');
+        const firestoreModule = await import('https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js');
+
+        app = initializeApp(firebaseConfig);
+        auth = authModule.getAuth(app);
+        db = firestoreModule.getFirestore(app);
+
+        window._firebaseModules = {
+          ...authModule,
+          ...firestoreModule
+        };
+
+        firebaseEnabled = true;
+        console.log('Firebase conectado correctamente.');
+      } catch (error) {
+        console.error('Error al iniciar Firebase:', error);
+        showMessage('Error al conectar Firebase. Se usará modo demo.');
+      }
+    }
+
+    // ==========================
+    // 2) DATOS DEMO LOCALES
+    // ==========================
+    const demoAppointments = [];
+    const demoCarePlans = [];
+
+    function updateAdminStats() {
+      document.getElementById('statAppointments').textContent = String(34 + demoAppointments.length);
+      document.getElementById('statCarePlans').textContent = String(9 + demoCarePlans.length);
+      document.getElementById('statPending').textContent = String(5 + demoAppointments.length);
+    }
+
+    function addRecentActivity(text) {
+      const list = document.getElementById('adminRecentList');
+      const item = document.createElement('li');
+      item.textContent = text;
+      list.prepend(item);
+    }
+
+    // ==========================
+    // 3) FORMULARIO DE CITAS
+    // ==========================
+    document.getElementById('appointmentForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const data = {
+        clientName: document.getElementById('clientName').value,
+        petName: document.getElementById('petName').value,
+        clientPhone: document.getElementById('clientPhone').value,
+        clientEmail: document.getElementById('clientEmail').value,
+        serviceType: document.getElementById('serviceType').value,
+        appointmentDate: document.getElementById('appointmentDate').value,
+        appointmentTime: document.getElementById('appointmentTime').value,
+        preferredAlly: document.getElementById('preferredAlly').value,
+        appointmentNotes: document.getElementById('appointmentNotes').value,
+        status: 'pending',
+        createdAt: new Date().toISOString()
+      };
+
+      if (firebaseEnabled) {
+        try {
+          const { collection, addDoc } = window._firebaseModules;
+          await addDoc(collection(db, 'appointments'), data);
+          showMessage('Cita guardada en Firebase.');
+        } catch (error) {
+          console.error(error);
+          showMessage('No se pudo guardar la cita en Firebase.');
+          return;
+        }
+      } else {
+        demoAppointments.push(data);
+        showMessage('Cita guardada en modo demo local.');
+      }
+
+      addRecentActivity(`Nueva cita: ${data.clientName} / ${data.petName} / ${data.serviceType}`);
+      updateAdminStats();
+      event.target.reset();
+    });
+
+    // ==========================
+    // 4) FORMULARIO PLAN PACIENTE / EXPEDIENTE
+    // ==========================
+    document.getElementById('carePlanForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const data = {
+        clientName: document.getElementById('cpClientName').value,
+        petName: document.getElementById('cpPetName').value,
+        species: document.getElementById('cpSpecies').value,
+        breed: document.getElementById('cpBreed').value,
+        age: document.getElementById('cpAge').value,
+        weight: document.getElementById('cpWeight').value,
+        color: document.getElementById('cpColor').value,
+        sex: document.getElementById('cpSex').value,
+        allergies: document.getElementById('cpAllergies').value,
+        chronic: document.getElementById('cpChronic').value,
+        vaccines: document.getElementById('cpVaccines').value,
+        examResults: document.getElementById('cpExamResults').value,
+        radiology: document.getElementById('cpRadiology').value,
+        diagnosis: document.getElementById('cpDiagnosis').value,
+        treatment: document.getElementById('cpTreatment').value,
+        meds: document.getElementById('cpMeds').value,
+        food: document.getElementById('cpFood').value,
+        notes: document.getElementById('cpNotes').value,
+        nextVisit: document.getElementById('cpNextVisit').value,
+        status: document.getElementById('cpStatus').value,
+        createdAt: new Date().toISOString()
+      };
+
+      if (firebaseEnabled) {
+        try {
+          const { collection, addDoc } = window._firebaseModules;
+          await addDoc(collection(db, 'medicalRecords'), data);
+          showMessage('Expediente médico guardado en Firebase.');
+        } catch (error) {
+          console.error(error);
+          showMessage('No se pudo guardar el expediente en Firebase.');
+          return;
+        }
+      } else {
+        demoCarePlans.push(data);
+        showMessage('Expediente guardado en modo demo local.');
+      }
+
+      document.getElementById('carePlanPreview').innerHTML = `
+        <div class="schedule-item">Dueño: ${data.clientName || '—'}</div>
+        <div class="schedule-item">Mascota: ${data.petName || '—'}</div>
+        <div class="schedule-item">Especie: ${data.species || '—'}</div>
+        <div class="schedule-item">Raza: ${data.breed || '—'}</div>
+        <div class="schedule-item">Edad: ${data.age || '—'}</div>
+        <div class="schedule-item">Peso: ${data.weight || '—'}</div>
+        <div class="schedule-item">Alergias: ${data.allergies || '—'}</div>
+        <div class="schedule-item">Vacunas: ${data.vaccines || '—'}</div>
+        <div class="schedule-item">Resultados de exámenes: ${data.examResults || '—'}</div>
+        <div class="schedule-item">Radiografías / imágenes: ${data.radiology || '—'}</div>
+        <div class="schedule-item">Diagnóstico: ${data.diagnosis || '—'}</div>
+        <div class="schedule-item">Tratamiento: ${data.treatment || '—'}</div>
+        <div class="schedule-item">Medicamentos: ${data.meds || '—'}</div>
+        <div class="schedule-item">Próxima revisión: ${data.nextVisit || '—'}</div>
+        <div class="schedule-item">Estado actual: ${data.status || '—'}</div>
+      `;
+
+      addRecentActivity(`Expediente médico actualizado: ${data.clientName} / ${data.petName}`);
+      updateAdminStats();
+      event.target.reset();
+    });
+
+    // ==========================
+    // 5) LOGIN Y REGISTRO DE ALIADOS
+    // ==========================
+    document.getElementById('allyLoginForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const email = document.getElementById('allyEmail').value;
+      const password = document.getElementById('allyPassword').value;
+
+      if (firebaseEnabled) {
+        try {
+          const { signInWithEmailAndPassword } = window._firebaseModules;
+          const cred = await signInWithEmailAndPassword(auth, email, password);
+          showMessage(`Ingreso correcto: ${cred.user.email}`);
+          addRecentActivity(`Aliado inició sesión: ${cred.user.email}`);
+        } catch (error) {
+          console.error(error);
+          showMessage('No se pudo iniciar sesión con Firebase.');
+        }
+      } else {
+        if (email && password) {
+          showMessage('Ingreso demo correcto. Para privacidad real conecta Firebase Auth.');
+          addRecentActivity(`Ingreso demo aliado: ${email}`);
+        } else {
+          showMessage('Completa correo y contraseña.');
+        }
+      }
+    });
+
+    document.getElementById('allyRegisterForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const name = document.getElementById('registerAllyName').value;
+      const email = document.getElementById('registerAllyEmail').value;
+      const password = document.getElementById('registerAllyPassword').value;
+
+      if (firebaseEnabled) {
+        try {
+          const { createUserWithEmailAndPassword, collection, addDoc } = window._firebaseModules;
+          const cred = await createUserWithEmailAndPassword(auth, email, password);
+          await addDoc(collection(db, 'allies'), {
+            name,
+            email,
+            uid: cred.user.uid,
+            role: 'ally',
+            createdAt: new Date().toISOString()
+          });
+          showMessage('Cuenta de aliado creada correctamente.');
+          addRecentActivity(`Nuevo aliado registrado: ${name}`);
+        } catch (error) {
+          console.error(error);
+          showMessage('No se pudo crear la cuenta del aliado.');
+        }
+      } else {
+        showMessage('Modo demo: para crear usuarios reales, conecta Firebase Auth.');
+        addRecentActivity(`Registro demo aliado: ${name}`);
+      }
+
+      event.target.reset();
+    });
+
+    // ==========================
+    // 6) CARGAR LOGOS DESPUÉS
+    // ==========================
+    // Cuando me mandes los logos, puedes reemplazar los divs por imágenes así:
+    // document.getElementById('logoBox1').innerHTML = '<img src="logo1.png" alt="Aliado 1">';
+
+    updateAdminStats();
+    await initFirebase();
+  </script>
+</body>
+</html>
+
