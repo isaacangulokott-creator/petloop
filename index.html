@@ -481,7 +481,7 @@
         <a href="#clientes">Agendar cita</a>
         <a href="#plan-paciente">Plan paciente</a>
         <a href="#aliados-publicos">Nuestros aliados</a>
-        <a href="#portal-aliados">Portal aliados</a>
+        <a href="#login">Iniciar sesión</a>
         <a href="#admin">Administrador</a>
       </nav>
     </div>
@@ -767,32 +767,37 @@
       </div>
     </section>
 
-    <section id="portal-aliados">
+    <section id="login">
       <div class="container">
-        <h2 class="section-title">Portal privado para aliados</h2>
+        <h2 class="section-title">Iniciar sesión</h2>
         <p class="section-subtitle">
-          Esta parte no debe ser pública en una versión real. Aquí está la base visual y la lógica para conectarla con Firebase Authentication.
+          Un solo acceso para entrar como cliente o como aliado. Después el sistema puede llevar a cada usuario a su panel correspondiente.
         </p>
 
         <div class="portal-grid">
           <div class="card form-card">
-            <div class="status-chip">Acceso de aliado</div>
-            <h3>Login de aliados</h3>
-            <p>Solo los aliados autorizados deberían poder entrar con correo y contraseña.</p>
+            <div class="status-chip">Acceso seguro</div>
+            <h3>Entrar a tu cuenta</h3>
+            <p>Usa tu correo y contraseña para ingresar a Petloop.</p>
             <form id="allyLoginForm">
-              <input type="email" id="allyEmail" placeholder="Correo del aliado" required>
+              <select id="loginRole" required>
+                <option value="">Selecciona tu perfil</option>
+                <option value="client">Cliente</option>
+                <option value="ally">Aliado</option>
+              </select>
+              <input type="email" id="allyEmail" placeholder="Correo electrónico" required>
               <input type="password" id="allyPassword" placeholder="Contraseña" required>
               <button class="btn btn-primary" type="submit">Iniciar sesión</button>
             </form>
 
             <div class="note">
-              Cuando actives Firebase Authentication, este login ya podrá funcionar con usuarios reales.
+              Cuando el login esté conectado completamente, cada usuario verá su panel según su tipo de cuenta.
             </div>
 
             <hr style="border:none; border-top:1px solid rgba(255,255,255,0.08); margin:20px 0;">
 
-            <h3>Crear usuario aliado</h3>
-            <p>Este formulario te sirve para registrar aliados nuevos dentro del sistema.</p>
+            <h3>Crear cuenta de aliado</h3>
+            <p>Desde aquí puedes registrar aliados nuevos dentro del sistema.</p>
             <form id="allyRegisterForm">
               <input type="text" id="registerAllyName" placeholder="Nombre del aliado o negocio" required>
               <input type="email" id="registerAllyEmail" placeholder="Correo del aliado" required>
@@ -801,24 +806,24 @@
             </form>
 
             <div class="security-note">
-              Sin Firebase Auth esto no queda privado de verdad. Con Firebase, el login sí puede volverse real y seguro.
+              Después también se puede agregar un formulario separado para registro de clientes y asignar cada rol automáticamente en Firebase.
             </div>
           </div>
 
           <div class="card portal-info">
-            <h3>Vista rápida del panel aliado</h3>
-            <p>Al entrar, el aliado podría ver algo así:</p>
+            <h3>Qué pasa después de iniciar sesión</h3>
+            <p>La idea es que un solo acceso sirva como puerta de entrada, pero cada perfil vea algo distinto.</p>
             <div class="ally-preview" id="allyPreview">
               <div class="dashboard-tags">
-                <span class="tag">Solicitudes nuevas</span>
-                <span class="tag">Clientes activos</span>
-                <span class="tag">Disponibilidad</span>
-                <span class="tag">Expedientes médicos</span>
+                <span class="tag">Cliente</span>
+                <span class="tag">Aliado</span>
+                <span class="tag">Citas</span>
+                <span class="tag">Expedientes</span>
               </div>
               <div class="schedule-list">
-                <div class="schedule-item">Cita pendiente — Luna — Grooming — 10:30 a.m.</div>
-                <div class="schedule-item">Cita confirmada — Max — Veterinaria — 1:00 p.m.</div>
-                <div class="schedule-item">Expediente actualizado — Rocky — Diagnóstico agregado.</div>
+                <div class="schedule-item">Cliente: ve sus mascotas, sus citas y su expediente.</div>
+                <div class="schedule-item">Aliado: ve solicitudes, pacientes y seguimiento clínico.</div>
+                <div class="schedule-item">Luego el sistema puede redirigir a paneles separados según el rol.</div>
               </div>
             </div>
           </div>
@@ -891,14 +896,14 @@
     // Reemplaza estos datos por los reales de tu proyecto Firebase.
     // Si los dejas vacíos, la página funcionará en modo demo local.
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAFfEvk_v6Fx4sQIHPDXbylZt7HLPvv-pI",
-  authDomain: "petloop-e9ff5.firebaseapp.com",
-  projectId: "petloop-e9ff5",
-  storageBucket: "petloop-e9ff5.firebasestorage.app",
-  messagingSenderId: "99606843307",
-  appId: "1:99606843307:web:26ea5338c1f2692e62ccee"
-};
+    const firebaseConfig = {
+      apiKey: "",
+      authDomain: "",
+      projectId: "",
+      storageBucket: "",
+      messagingSenderId: "",
+      appId: ""
+    };
 
     let app = null;
     let auth = null;
@@ -1145,4 +1150,3 @@ const firebaseConfig = {
   </script>
 </body>
 </html>
-
