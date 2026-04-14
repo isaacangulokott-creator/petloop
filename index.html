@@ -1076,65 +1076,9 @@
     });
 
     // ==========================
-    // 5) LOGIN Y REGISTRO DE ALIADOS
-    // ==========================
-    document.getElementById('allyLoginForm').addEventListener('submit', async (event) => {
-      event.preventDefault();
+   
 
-      const email = document.getElementById('allyEmail').value;
-      const password = document.getElementById('allyPassword').value;
-
-      if (firebaseEnabled) {
-        try {
-          const { signInWithEmailAndPassword } = window._firebaseModules;
-          const cred = await signInWithEmailAndPassword(auth, email, password);
-          showMessage(`Ingreso correcto: ${cred.user.email}`);
-          addRecentActivity(`Aliado inició sesión: ${cred.user.email}`);
-        } catch (error) {
-          console.error(error);
-          showMessage('No se pudo iniciar sesión con Firebase.');
-        }
-      } else {
-        if (email && password) {
-          showMessage('Ingreso demo correcto. Para privacidad real conecta Firebase Auth.');
-          addRecentActivity(`Ingreso demo aliado: ${email}`);
-        } else {
-          showMessage('Completa correo y contraseña.');
-        }
-      }
-    });
-
-    document.getElementById('allyRegisterForm').addEventListener('submit', async (event) => {
-      event.preventDefault();
-
-      const name = document.getElementById('registerAllyName').value;
-      const email = document.getElementById('registerAllyEmail').value;
-      const password = document.getElementById('registerAllyPassword').value;
-
-      if (firebaseEnabled) {
-        try {
-          const { createUserWithEmailAndPassword, collection, addDoc } = window._firebaseModules;
-          const cred = await createUserWithEmailAndPassword(auth, email, password);
-          await addDoc(collection(db, 'allies'), {
-            name,
-            email,
-            uid: cred.user.uid,
-            role: 'ally',
-            createdAt: new Date().toISOString()
-          });
-          showMessage('Cuenta de aliado creada correctamente.');
-          addRecentActivity(`Nuevo aliado registrado: ${name}`);
-        } catch (error) {
-          console.error(error);
-          showMessage('No se pudo crear la cuenta del aliado.');
-        }
-      } else {
-        showMessage('Modo demo: para crear usuarios reales, conecta Firebase Auth.');
-        addRecentActivity(`Registro demo aliado: ${name}`);
-      }
-
-      event.target.reset();
-    });
+  
 
     // ==========================
     // 6) CARGAR LOGOS DESPUÉS
