@@ -1144,6 +1144,106 @@
 
     updateAdminStats();
     await initFirebase();
+    // ==========================
+// LOGIN REAL
+// ==========================
+
+let currentUserProfile = null;
+
+// Guardar usuario en Firestore
+async function saveUserProfile(uid, data) {
+  const { doc, setDoc } = window._firebaseModules;
+  await setDoc(doc(db, "users", uid), data);
+}
+
+// Obtener usuario
+async function getUserProfile(uid) {
+  const { doc, getDoc } = window._firebaseModules;
+  const snap = await getDoc(doc(db, "users", uid));
+  return snap.exists() ? snap.data() : null;
+}
+
+// Estado visual
+function updateAuthStatus(text) {
+  document.getElementById("authStatus").innerHTML = `
+    <div class="schedule-item">${text}</div>
+  `;
+}
+
+// ==========================
+// REGISTRO
+// ==========================
+document.getElementById("registerForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const name = document.getElementById("registerName").value;
+  const email = document.getElementById("registerEmail").value;
+  const password = document.getElementById("registerPassword").value;
+  const role = document.getElementById("registerRole").value;
+
+  try {
+    const { createUserWithEmailAndPassword } = window._firebaseModules;
+
+    const userCred = await createUserWithEmailAndPassword(auth, email, password);
+
+    await saveUserProfile(userCred.user.uid, {
+      name,
+      email,
+      role
+    });
+
+    updateAuthStatus("Cuenta creada correctamente ✅");
+
+  } catch (error) {
+    updateAuthStatus("Error: " + error.message);
+  }
+});
+
+// ==========================
+// LOGIN
+// ==========================
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
+  const selectedRole = document.getElementById("loginRole").value;
+
+  try {
+    const { signInWithEmailAndPassword } = window._firebaseModules;
+
+    const userCred = await signInWithEmailAndPassword(auth, email, password);
+
+    const profile = await getUserProfile(userCred.user.uid);
+
+    if (!profile) {
+      updateAuthStatus("No existe perfil");
+      return;
+    }
+
+    if (profile.role !== selectedRole) {
+      updateAuthStatus("Rol incorrecto");
+      return;
+    }
+
+    currentUserProfile = profile;
+
+    updateAuthStatus("Bienvenido " + profile.name + " (" + profile.role + ") 🚀");
+
+  } catch (error) {
+    updateAuthStatus("Error: " + error.message);
+  }
+});
+
+// ==========================
+// LOGOUT
+// ==========================
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+  const { signOut } = window._firebaseModules;
+  await signOut(auth);
+  currentUserProfile = null;
+  updateAuthStatus("Sesión cerrada");
+});
   </script>
 </body>
 </html>
