@@ -770,69 +770,63 @@
       </div>
     </section>
 
-    <section id="login">
-      <div class="container">
-        <h2 class="section-title">Iniciar sesión</h2>
-        <p class="section-subtitle">
-          Un solo acceso para entrar como cliente o como aliado. Después el sistema puede llevar a cada usuario a su panel correspondiente.
-        </p>
+   <section id="login">
+  <div class="container">
+    <h2 class="section-title">Iniciar sesión</h2>
+    <p class="section-subtitle">
+      Un solo acceso para entrar como cliente o como aliado.
+    </p>
 
-        <div class="portal-grid">
-          <div class="card form-card">
-            <div class="status-chip">Acceso seguro</div>
-            <h3>Entrar a tu cuenta</h3>
-            <p>Usa tu correo y contraseña para ingresar a Petloop.</p>
-            <form id="allyLoginForm">
-              <select id="loginRole" required>
-                <option value="">Selecciona tu perfil</option>
-                <option value="client">Cliente</option>
-                <option value="ally">Aliado</option>
-              </select>
-              <input type="email" id="allyEmail" placeholder="Correo electrónico" required>
-              <input type="password" id="allyPassword" placeholder="Contraseña" required>
-              <button class="btn btn-primary" type="submit">Iniciar sesión</button>
-            </form>
+    <div class="portal-grid">
+      <div class="card form-card">
+        <h3>Entrar</h3>
+        <form id="loginForm">
+          <select id="loginRole" required>
+            <option value="">Selecciona tu perfil</option>
+            <option value="client">Cliente</option>
+            <option value="ally">Aliado</option>
+          </select>
 
-            <div class="note">
-              Cuando el login esté conectado completamente, cada usuario verá su panel según su tipo de cuenta.
-            </div>
+          <input type="email" id="loginEmail" placeholder="Correo electrónico" required>
+          <input type="password" id="loginPassword" placeholder="Contraseña" required>
 
-            <hr style="border:none; border-top:1px solid rgba(255,255,255,0.08); margin:20px 0;">
+          <button class="btn btn-primary" type="submit">Iniciar sesión</button>
+        </form>
 
-            <h3>Crear cuenta de aliado</h3>
-            <p>Desde aquí puedes registrar aliados nuevos dentro del sistema.</p>
-            <form id="allyRegisterForm">
-              <input type="text" id="registerAllyName" placeholder="Nombre del aliado o negocio" required>
-              <input type="email" id="registerAllyEmail" placeholder="Correo del aliado" required>
-              <input type="password" id="registerAllyPassword" placeholder="Contraseña" required>
-              <button class="btn btn-secondary" type="submit">Crear cuenta de aliado</button>
-            </form>
+        <hr style="border:none; border-top:1px solid rgba(255,255,255,0.08); margin:20px 0;">
 
-            <div class="security-note">
-              Después también se puede agregar un formulario separado para registro de clientes y asignar cada rol automáticamente en Firebase.
-            </div>
-          </div>
+        <h3>Crear cuenta</h3>
+        <form id="registerForm">
+          <select id="registerRole" required>
+            <option value="">Selecciona tu perfil</option>
+            <option value="client">Cliente</option>
+            <option value="ally">Aliado</option>
+          </select>
 
-          <div class="card portal-info">
-            <h3>Qué pasa después de iniciar sesión</h3>
-            <p>La idea es que un solo acceso sirva como puerta de entrada, pero cada perfil vea algo distinto.</p>
-            <div class="ally-preview" id="allyPreview">
-              <div class="dashboard-tags">
-                <span class="tag">Cliente</span>
-                <span class="tag">Aliado</span>
-                <span class="tag">Citas</span>
-                <span class="tag">Expedientes</span>
-              </div>
-              <div class="schedule-list">
-                <div class="schedule-item">Cliente: ve sus mascotas, sus citas y su expediente.</div>
-                <div class="schedule-item">Aliado: ve solicitudes, pacientes y seguimiento clínico.</div>
-                <div class="schedule-item">Luego el sistema puede redirigir a paneles separados según el rol.</div>
-              </div>
-            </div>
-          </div>
+          <input type="text" id="registerName" placeholder="Nombre completo o negocio" required>
+          <input type="email" id="registerEmail" placeholder="Correo electrónico" required>
+          <input type="password" id="registerPassword" placeholder="Contraseña" required>
+
+          <button class="btn btn-secondary" type="submit">Crear cuenta</button>
+        </form>
+
+        <button class="btn btn-secondary" id="logoutBtn" type="button" style="margin-top:16px;">
+          Cerrar sesión
+        </button>
+      </div>
+
+      <div class="card portal-info">
+        <h3>Estado de acceso</h3>
+        <div class="schedule-list" id="authStatus">
+          <div class="schedule-item">Estado: No autenticado</div>
+          <div class="schedule-item">Correo: —</div>
+          <div class="schedule-item">Rol: —</div>
+          <div class="schedule-item">Panel: —</div>
         </div>
       </div>
-    </section>
+    </div>
+  </div>
+</section>
 
     <section id="admin">
       <div class="container">
