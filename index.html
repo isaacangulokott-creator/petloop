@@ -1221,51 +1221,7 @@ await loadPetsForCurrentUser();
     updateAuthStatus("Error: " + error.message);
   }
 });
-</section> <!-- login -->
 
-<section id="mis-mascotas">
-  <div class="container">
-    <h2 class="section-title">Mis mascotas</h2>
-    <p class="section-subtitle">
-      Registra y consulta las mascotas asociadas a tu cuenta.
-    </p>
-
-    <div class="portal-grid">
-      <div class="card form-card">
-        <h3>Registrar mascota</h3>
-        <form id="petForm">
-          <input type="text" id="petRegisterName" placeholder="Nombre de la mascota" required>
-
-          <div class="two">
-            <input type="text" id="petRegisterSpecies" placeholder="Especie" required>
-            <input type="text" id="petRegisterBreed" placeholder="Raza">
-          </div>
-
-          <div class="two">
-            <input type="number" id="petRegisterAge" placeholder="Edad">
-            <input type="text" id="petRegisterWeight" placeholder="Peso">
-          </div>
-
-          <div class="two">
-            <input type="text" id="petRegisterSex" placeholder="Sexo">
-            <input type="text" id="petRegisterColor" placeholder="Color">
-          </div>
-
-          <textarea id="petRegisterNotes" placeholder="Notas importantes"></textarea>
-
-          <button class="btn btn-primary" type="submit">Guardar mascota</button>
-        </form>
-      </div>
-
-      <div class="card portal-info">
-        <h3>Listado de mascotas</h3>
-        <div class="schedule-list" id="petsList">
-          <div class="schedule-item">Todavía no hay mascotas registradas.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- sigue lo demás (admin, etc) -->
 // ==========================
