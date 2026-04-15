@@ -1222,8 +1222,103 @@ await loadPetsForCurrentUser();
   }
 });
 
+// ==========================
+// MASCOTAS POR USUARIO
+// ==========================
+async function savePetForCurrentUser(petData) {
+  const { collection, addDoc } = window._firebaseModules;
 
-<!-- sigue lo demás (admin, etc) -->
+  if (!auth.currentUser) {
+    throw new Error("No hay sesión iniciada.");
+  }
+
+  await addDoc(collection(db, "pets"), {
+    userId: auth.currentUser.uid,
+    ownerEmail: auth.currentUser.email || "",
+    ...petData,
+    createdAt: new Date().toISOString()
+  });
+}
+
+async function loadPetsForCurrentUser() {
+  const { collection, getDocs, query, where } = window._firebaseModules;
+  const petsList = document.getElementById("petsList");
+
+  if (!petsList) return;
+
+  if (!auth.currentUser) {
+    petsList.innerHTML = `<div class="schedule-item">Inicia sesión para ver tus mascotas.</div>`;
+    return;
+  }
+
+  const q = query(
+    collection(db, "pets"),
+    where("userId", "==", auth.currentUser.uid)
+  );
+
+  const snapshot = await getDocs(q);
+
+  if (snapshot.empty) {
+    petsList.innerHTML = `<div class="schedule-item">Todavía no tienes mascotas registradas.</div>`;
+    return;
+  }
+
+  petsList.innerHTML = "";
+
+  snapshot.forEach((docItem) => {
+    const pet = docItem.data();
+
+    const div = document.createElement("div");
+    div.className = "schedule-item";
+    div.innerHTML = `
+      <strong>${pet.name || "Sin nombre"}</strong><br>
+      Especie: ${pet.species || "—"}<br>
+      Raza: ${pet.breed || "—"}<br>
+      Edad: ${pet.age || "—"}<br>
+      Peso: ${pet.weight || "—"}<br>
+      Sexo: ${pet.sex || "—"}<br>
+      Color: ${pet.color || "—"}<br>
+      Notas: ${pet.notes || "—"}
+    `;
+    petsList.appendChild(div);
+  });
+}
+
+document.getElementById("petForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  if (!firebaseEnabled) {
+    showMessage("Firebase no está conectado.");
+    return;
+  }
+
+  if (!auth.currentUser) {
+    showMessage("Debes iniciar sesión primero.");
+    return;
+  }
+
+  const petData = {
+    name: document.getElementById("petRegisterName").value,
+    species: document.getElementById("petRegisterSpecies").value,
+    breed: document.getElementById("petRegisterBreed").value,
+    age: document.getElementById("petRegisterAge").value,
+    weight: document.getElementById("petRegisterWeight").value,
+    sex: document.getElementById("petRegisterSex").value,
+    color: document.getElementById("petRegisterColor").value,
+    notes: document.getElementById("petRegisterNotes").value
+  };
+
+  try {
+    await savePetForCurrentUser(petData);
+    showMessage("Mascota guardada correctamente.");
+    e.target.reset();
+    await loadPetsForCurrentUser();
+  } catch (error) {
+    console.error(error);
+    showMessage("Error al guardar mascota: " + error.message);
+  }
+});
+
 // ==========================
 // LOGOUT
 // ==========================
