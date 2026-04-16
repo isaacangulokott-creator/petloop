@@ -838,8 +838,10 @@
       <div class="card form-card">
         <h3>Registrar mascota</h3>
         <form id="petForm">
+          
           <input type="text" id="petRegisterName" placeholder="Nombre de la mascota" required>
-
+<input type="file" id="petRegisterImage" accept="image/*">
+          
           <div class="two">
             <input type="text" id="petRegisterSpecies" placeholder="Especie" required>
             <input type="text" id="petRegisterBreed" placeholder="Raza">
@@ -1299,6 +1301,7 @@ document.getElementById("petForm").addEventListener("submit", async (e) => {
 
   const petData = {
     name: document.getElementById("petRegisterName").value,
+    imageName: document.getElementById("petRegisterImage").files[0]?.name || ""
     species: document.getElementById("petRegisterSpecies").value,
     breed: document.getElementById("petRegisterBreed").value,
     age: document.getElementById("petRegisterAge").value,
