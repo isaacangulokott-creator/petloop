@@ -1039,6 +1039,7 @@
         preferredAlly: document.getElementById('preferredAlly').value,
         appointmentNotes: document.getElementById('appointmentNotes').value,
         status: 'pending',
+        userId: auth.currentUser?.uid || "",
         createdAt: new Date().toISOString()
       };
 
@@ -1142,6 +1143,45 @@
     // document.getElementById('logoBox1').innerHTML = '<img src="logo1.png" alt="Aliado 1">';
 
     updateAdminStats();
+    async function loadAppointmentsForCurrentUser() {
+  const { collection, getDocs, query, where } = window._firebaseModules;
+
+  const list = document.getElementById("myAppointmentsList");
+
+  if (!auth.currentUser) {
+    list.innerHTML = '<div class="schedule-item">Inicia sesión para ver tus citas.</div>';
+    return;
+  }
+
+  const q = query(
+    collection(db, "appointments"),
+    where("userId", "==", auth.currentUser.uid)
+  );
+
+  const snapshot = await getDocs(q);
+
+  if (snapshot.empty) {
+    list.innerHTML = '<div class="schedule-item">No tienes citas registradas.</div>';
+    return;
+  }
+
+  list.innerHTML = "";
+
+  snapshot.forEach(docItem => {
+    const data = docItem.data();
+
+    const div = document.createElement("div");
+    div.className = "schedule-item";
+    div.innerHTML = `
+      <strong>${data.petName}</strong><br>
+      Servicio: ${data.serviceType}<br>
+      Fecha: ${data.appointmentDate}<br>
+      Hora: ${data.appointmentTime}
+    `;
+
+    list.appendChild(div);
+  });
+}
     await initFirebase();
     // ==========================
 // LOGIN REAL
