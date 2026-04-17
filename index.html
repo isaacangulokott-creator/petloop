@@ -1268,6 +1268,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     currentUserProfile = profile;
 
     updateAuthStatus("Bienvenido " + profile.name + " (" + profile.role + ") 🚀");
+    await loadAppointmentsForCurrentUser();
 await loadPetsForCurrentUser();
   } catch (error) {
     updateAuthStatus("Error: " + error.message);
@@ -1380,6 +1381,8 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
   await signOut(auth);
   currentUserProfile = null;
   updateAuthStatus("Sesión cerrada");
+  document.getElementById("myAppointmentsList").innerHTML =
+  '<div class="schedule-item">Inicia sesión para ver tus citas.</div>';
   document.getElementById("petsList").innerHTML =
   '<div class="schedule-item">Inicia sesión para ver tus mascotas.</div>';
   
