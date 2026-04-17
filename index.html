@@ -613,7 +613,9 @@
             <form id="appointmentForm">
               <div class="two">
                 <input type="text" id="clientName" placeholder="Nombre del cliente" required>
-                <input type="text" id="petName" placeholder="Nombre de la mascota" required>
+                <select id="petSelect" required>
+  <option value="">Selecciona tu mascota</option>
+</select>
               </div>
               <div class="two">
                 <input type="tel" id="clientPhone" placeholder="Teléfono" required>
@@ -1318,23 +1320,7 @@ async function loadPetsForCurrentUser() {
 
   petsList.innerHTML = "";
 
-  snapshot.forEach((docItem) => {
-    const pet = docItem.data();
 
-    const div = document.createElement("div");
-    div.className = "schedule-item";
-    div.innerHTML = `
-      <strong>${pet.name || "Sin nombre"}</strong><br>
-      Especie: ${pet.species || "—"}<br>
-      Raza: ${pet.breed || "—"}<br>
-      Edad: ${pet.age || "—"}<br>
-      Peso: ${pet.weight || "—"}<br>
-      Sexo: ${pet.sex || "—"}<br>
-      Color: ${pet.color || "—"}<br>
-      Notas: ${pet.notes || "—"}
-    `;
-    petsList.appendChild(div);
-  });
 }
 
 document.getElementById("petForm").addEventListener("submit", async (e) => {
@@ -1343,6 +1329,45 @@ document.getElementById("petForm").addEventListener("submit", async (e) => {
   if (!firebaseEnabled) {
     showMessage("Firebase no está conectado.");
     return;
+    const petSelect = document.getElementById("petSelect");
+
+petsList.innerHTML = "";
+if (petSelect) {
+  petSelect.innerHTML = '<option value="">Selecciona tu mascota</option>';
+}
+
+const petSelect = document.getElementById("petSelect");
+
+petsList.innerHTML = "";
+if (petSelect) {
+  petSelect.innerHTML = '<option value="">Selecciona tu mascota</option>';
+}
+
+snapshot.forEach((docItem) => {
+  const pet = docItem.data();
+  const petId = docItem.id;
+
+  const div = document.createElement("div");
+  div.className = "schedule-item";
+  div.innerHTML = `
+    <strong>${pet.name || "Sin nombre"}</strong><br>
+    Especie: ${pet.species || "—"}<br>
+    Raza: ${pet.breed || "—"}<br>
+    Edad: ${pet.age || "—"}<br>
+    Peso: ${pet.weight || "—"}<br>
+    Sexo: ${pet.sex || "—"}<br>
+    Color: ${pet.color || "—"}<br>
+    Notas: ${pet.notes || "—"}
+  `;
+  petsList.appendChild(div);
+
+  if (petSelect) {
+    const option = document.createElement("option");
+    option.value = petId;
+    option.textContent = pet.name || "Mascota sin nombre";
+    petSelect.appendChild(option);
+  }
+});
   }
 
   if (!auth.currentUser) {
