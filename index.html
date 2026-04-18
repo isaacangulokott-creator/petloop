@@ -1114,7 +1114,8 @@
 
       const data = {
         clientName: document.getElementById('clientName').value,
-        petName: document.getElementById('petName').value,
+        petId: document.getElementById('petSelect').value,
+petName: document.getElementById('petSelect').selectedOptions[0]?.text || "",
         clientPhone: document.getElementById('clientPhone').value,
         clientEmail: document.getElementById('clientEmail').value,
         serviceType: document.getElementById('serviceType').value,
@@ -1458,22 +1459,7 @@ document.getElementById("petForm").addEventListener("submit", async (e) => {
   if (!firebaseEnabled) {
     showMessage("Firebase no está conectado.");
     return;
-    const petSelect = document.getElementById("petSelect");
-    const petHistorySelect = document.getElementById("petHistorySelect");
-
-petsList.innerHTML = "";
-if (petSelect) {
-  petSelect.innerHTML = '<option value="">Selecciona tu mascota</option>';
-  if (petHistorySelect) {
-  petHistorySelect.innerHTML = '<option value="">Selecciona tu mascota</option>';
-}
-}
-if (petHistorySelect) {
-  petHistorySelect.innerHTML = '<option value="">Selecciona tu mascota</option>';
-}
-
-
-  if (!auth.currentUser) {
+    
     showMessage("Debes iniciar sesión primero.");
     return;
   }
