@@ -1385,6 +1385,9 @@ async function loadPetsForCurrentUser() {
   const petsList = document.getElementById("petsList");
   const petSelect = document.getElementById("petSelect");
   const petHistorySelect = document.getElementById("petHistorySelect");
+  const cpPetSelect = document.getElementById("cpPetSelect");
+  const cpPetSelect = document.getElementById("cpPetSelect");
+  
 
   if (!petsList) return;
 
@@ -1407,7 +1410,13 @@ async function loadPetsForCurrentUser() {
     }
     if (petHistorySelect) {
       petHistorySelect.innerHTML = '<option value="">Selecciona tu mascota</option>';
+      if (cpPetSelect) {
+  cpPetSelect.innerHTML = '<option value="">Selecciona tu mascota</option>';
+}
     }
+    if (cpPetSelect) {
+  cpPetSelect.innerHTML = '<option value="">Selecciona tu mascota</option>';
+}
     return;
   }
 
@@ -1438,6 +1447,12 @@ async function loadPetsForCurrentUser() {
       Notas: ${pet.notes || "—"}
     `;
     petsList.appendChild(div);
+    if (cpPetSelect) {
+  const optionCare = document.createElement("option");
+  optionCare.value = petId;
+  optionCare.textContent = pet.name || "Mascota sin nombre";
+  cpPetSelect.appendChild(optionCare);
+}
 
     if (petSelect) {
       const option = document.createElement("option");
