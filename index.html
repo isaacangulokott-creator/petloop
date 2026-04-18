@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Petloop | Plataforma para mascotas</title>
+  <title>Petloop | Plataforma para mascotas</title
+                                             
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -1325,13 +1326,13 @@ async function savePetForCurrentUser(petData) {
 async function loadPetsForCurrentUser() {
   const { collection, getDocs, query, where } = window._firebaseModules;
   const petsList = document.getElementById("petsList");
-   const petSelect = document.getElementById("petSelect");
+  const petSelect = document.getElementById("petSelect");
   const petHistorySelect = document.getElementById("petHistorySelect");
 
   if (!petsList) return;
 
   if (!auth.currentUser) {
-    petsList.innerHTML = `<div class="schedule-item">Inicia sesión para ver tus mascotas.</div>`;
+    petsList.innerHTML = '<div class="schedule-item">Inicia sesión para ver tus mascotas.</div>';
     return;
   }
 
@@ -1343,13 +1344,58 @@ async function loadPetsForCurrentUser() {
   const snapshot = await getDocs(q);
 
   if (snapshot.empty) {
-    petsList.innerHTML = `<div class="schedule-item">Todavía no tienes mascotas registradas.</div>`;
+    petsList.innerHTML = '<div class="schedule-item">Todavía no tienes mascotas registradas.</div>';
+    if (petSelect) {
+      petSelect.innerHTML = '<option value="">Selecciona tu mascota</option>';
+    }
+    if (petHistorySelect) {
+      petHistorySelect.innerHTML = '<option value="">Selecciona tu mascota</option>';
+    }
     return;
   }
 
   petsList.innerHTML = "";
 
+  if (petSelect) {
+    petSelect.innerHTML = '<option value="">Selecciona tu mascota</option>';
+  }
 
+  if (petHistorySelect) {
+    petHistorySelect.innerHTML = '<option value="">Selecciona tu mascota</option>';
+  }
+
+  snapshot.forEach((docItem) => {
+    const pet = docItem.data();
+    const petId = docItem.id;
+
+    const div = document.createElement("div");
+    div.className = "schedule-item";
+    div.innerHTML = `
+      <strong>${pet.name || "Sin nombre"}</strong><br>
+      Especie: ${pet.species || "—"}<br>
+      Raza: ${pet.breed || "—"}<br>
+      Edad: ${pet.age || "—"}<br>
+      Peso: ${pet.weight || "—"}<br>
+      Sexo: ${pet.sex || "—"}<br>
+      Color: ${pet.color || "—"}<br>
+      Notas: ${pet.notes || "—"}
+    `;
+    petsList.appendChild(div);
+
+    if (petSelect) {
+      const option = document.createElement("option");
+      option.value = petId;
+      option.textContent = pet.name || "Mascota sin nombre";
+      petSelect.appendChild(option);
+    }
+
+    if (petHistorySelect) {
+      const optionHistory = document.createElement("option");
+      optionHistory.value = petId;
+      optionHistory.textContent = pet.name || "Mascota sin nombre";
+      petHistorySelect.appendChild(optionHistory);
+    }
+  });
 }
 
 document.getElementById("petForm").addEventListener("submit", async (e) => {
