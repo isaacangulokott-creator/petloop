@@ -1325,6 +1325,8 @@ async function savePetForCurrentUser(petData) {
 async function loadPetsForCurrentUser() {
   const { collection, getDocs, query, where } = window._firebaseModules;
   const petsList = document.getElementById("petsList");
+   const petSelect = document.getElementById("petSelect");
+  const petHistorySelect = document.getElementById("petHistorySelect");
 
   if (!petsList) return;
 
@@ -1362,11 +1364,15 @@ document.getElementById("petForm").addEventListener("submit", async (e) => {
 petsList.innerHTML = "";
 if (petSelect) {
   petSelect.innerHTML = '<option value="">Selecciona tu mascota</option>';
+  if (petHistorySelect) {
+  petHistorySelect.innerHTML = '<option value="">Selecciona tu mascota</option>';
+}
 }
 if (petHistorySelect) {
   petHistorySelect.innerHTML = '<option value="">Selecciona tu mascota</option>';
 }
 const petSelect = document.getElementById("petSelect");
+    
 
 petsList.innerHTML = "";
 if (petSelect) {
@@ -1390,7 +1396,12 @@ snapshot.forEach((docItem) => {
     Notas: ${pet.notes || "—"}
   `;
   petsList.appendChild(div);
-
+if (petHistorySelect) {
+  const optionHistory = document.createElement("option");
+  optionHistory.value = petId;
+  optionHistory.textContent = pet.name || "Mascota sin nombre";
+  petHistorySelect.appendChild(optionHistory);
+}
   if (petSelect) {
     const option = document.createElement("option");
     option.value = petId;
