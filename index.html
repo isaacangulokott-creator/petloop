@@ -1335,9 +1335,12 @@ async function getUserProfile(uid) {
 }
 
 // Estado visual
-function updateAuthStatus(text) {
+function updateAuthStatus(text, email = "—", role = "—", panel = "—") {
   document.getElementById("authStatus").innerHTML = `
-    <div class="schedule-item">${text}</div>
+    <div class="schedule-item">Estado: ${text}</div>
+    <div class="schedule-item">Correo: ${email}</div>
+    <div class="schedule-item">Rol: ${role}</div>
+    <div class="schedule-item">Panel: ${panel}</div>
   `;
 }
 
@@ -1347,12 +1350,17 @@ function updateAuthStatus(text) {
 document.getElementById("registerForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const name = document.getElementById("registerName").value;
-  const email = document.getElementById("registerEmail").value;
+  const name = document.getElementById("registerName").value.trim();
+  const email = document.getElementById("registerEmail").value.trim();
   const password = document.getElementById("registerPassword").value;
   const role = document.getElementById("registerRole").value;
 
   try {
+    if (!firebaseEnabled || !auth) {
+      updateAuthStatus("Firebase no está listo");
+      return;
+    }
+
     const { createUserWithEmailAndPassword } = window._firebaseModules;
 
     const userCred = await createUserWithEmailAndPassword(auth, email, password);
@@ -1363,10 +1371,12 @@ document.getElementById("registerForm").addEventListener("submit", async (e) => 
       role
     });
 
-    updateAuthStatus("Cuenta creada correctamente ✅");
+    updateAuthStatus("Cuenta creada correctamente ✅", email, role, "Pendiente");
 
   } catch (error) {
-    updateAuthStatus("Error: " + error.message);
+    console.error("ERROR REGISTRO:", error);
+    updateAuthStatus("Error: " + (error.code || error.message), email, role || "—", "—");
+    showMessage("Registro falló: " + (error.code || error.message));
   }
 });
 
@@ -1376,40 +1386,57 @@ document.getElementById("registerForm").addEventListener("submit", async (e) => 
 document.getElementById("loginForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const email = document.getElementById("loginEmail").value;
+  const email = document.getElementById("loginEmail").value.trim();
   const password = document.getElementById("loginPassword").value;
   const selectedRole = document.getElementById("loginRole").value;
 
   try {
+    if (!firebaseEnabled || !auth) {
+      updateAuthStatus("Firebase no está listo");
+      return;
+    }
+
     const { signInWithEmailAndPassword } = window._firebaseModules;
 
+    console.log("Intentando iniciar sesión con:", email);
+
     const userCred = await signInWithEmailAndPassword(auth, email, password);
+    console.log("Login OK:", userCred.user.uid);
 
     const profile = await getUserProfile(userCred.user.uid);
+    console.log("Perfil leído:", profile);
 
     if (!profile) {
-      updateAuthStatus("No existe perfil");
+      updateAuthStatus("No existe perfil", email, "—", "—");
       return;
     }
 
     if (profile.role !== selectedRole) {
-      updateAuthStatus("Rol incorrecto");
+      updateAuthStatus("Rol incorrecto", email, profile.role || "—", "—");
       return;
     }
 
     currentUserProfile = profile;
 
- currentUserProfile = profile;
+    const admin = await isAdmin(userCred.user.uid);
 
-updateAuthStatus("Bienvenido " + profile.name + " (" + profile.role + ") 🚀");
-await loadAppointmentsForCurrentUser();
-await loadPetsForCurrentUser();
-await updateAdminVisibility();
+    updateAuthStatus(
+      "Bienvenido " + profile.name + " ✅",
+      profile.email || email,
+      profile.role || "—",
+      admin ? "Administrador" : "Usuario"
+    );
+
+    await loadAppointmentsForCurrentUser();
+    await loadPetsForCurrentUser();
+    await updateAdminVisibility();
+
   } catch (error) {
-    updateAuthStatus("Error: " + error.message);
+    console.error("ERROR LOGIN:", error);
+    updateAuthStatus("Error: " + (error.code || error.message), email, "—", "—");
+    showMessage("Login falló: " + (error.code || error.message));
   }
 });
-
 // ==========================
 // MASCOTAS POR USUARIO
 // ==========================
