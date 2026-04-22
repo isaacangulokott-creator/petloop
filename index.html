@@ -942,7 +942,6 @@
   </div>
 </section>
 
-    <section id="historial-mascota">
   <div class="container">
     <h2 class="section-title">Historial por mascota</h2>
     <p class="section-subtitle">
@@ -969,7 +968,7 @@
   </div>
 </section>
 
-<section id="admin">
+<section id="admin" style="display:none;">
       <div class="container">
         <h2 class="section-title">Panel de administrador</h2>
         <p class="section-subtitle">
@@ -1158,7 +1157,8 @@ petName: document.getElementById('petSelect').selectedOptions[0]?.text || "",
 
       const data = {
         clientName: document.getElementById('cpClientName').value,
-        petName: document.getElementById('cpPetName').value,
+       petId: document.getElementById('cpPetSelect').value,
+petName: document.getElementById('cpPetSelect').selectedOptions[0]?.text || "",
         species: document.getElementById('cpSpecies').value,
         breed: document.getElementById('cpBreed').value,
         age: document.getElementById('cpAge').value,
@@ -1269,7 +1269,52 @@ petName: document.getElementById('petSelect').selectedOptions[0]?.text || "",
     list.appendChild(div);
   });
 }
+    async function isAdmin(uid) {
+      async function updateAdminVisibility() {
+  const adminSection = document.getElementById("admin");
+
+  if (!adminSection) return;
+
+  if (!auth || !auth.currentUser) {
+    adminSection.style.display = "none";
+    return;
+  }
+
+  const admin = await isAdmin(auth.currentUser.uid);
+  adminSection.style.display = admin ? "block" : "none";
+}
+  if (!firebaseEnabled || !db || !uid) return false;
+
+  try {
+    const { doc, getDoc } = window._firebaseModules;
+    const adminSnap = await getDoc(doc(db, "admins", uid));
+    return adminSnap.exists();
+  } catch (error) {
+    console.error("Error revisando admin:", error);
+    return false;
+  }
+}
     await initFirebase();
+if (firebaseEnabled && auth) {
+  const { onAuthStateChanged } = window._firebaseModules;
+
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      await updateAdminVisibility();
+    } else {
+      document.getElementById("admin").style.display = "none";
+    }
+  });
+}
+
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      await updateAdminVisibility();
+    } else {
+      document.getElementById("admin").style.display = "none";
+    }
+  });
+}
     // ==========================
 // LOGIN REAL
 // ==========================
@@ -1354,9 +1399,12 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
 
     currentUserProfile = profile;
 
-    updateAuthStatus("Bienvenido " + profile.name + " (" + profile.role + ") 🚀");
-    await loadAppointmentsForCurrentUser();
+ currentUserProfile = profile;
+
+updateAuthStatus("Bienvenido " + profile.name + " (" + profile.role + ") 🚀");
+await loadAppointmentsForCurrentUser();
 await loadPetsForCurrentUser();
+await updateAdminVisibility();
   } catch (error) {
     updateAuthStatus("Error: " + error.message);
   }
@@ -1516,6 +1564,8 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
   '<div class="schedule-item">Inicia sesión para ver tus citas.</div>';
   document.getElementById("petsList").innerHTML =
   '<div class="schedule-item">Inicia sesión para ver tus mascotas.</div>';
+  document.getElementById("admin").style.display = "none";
+  
   
 });
   </script>
