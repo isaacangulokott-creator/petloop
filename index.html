@@ -1385,34 +1385,39 @@ document.getElementById("registerForm").addEventListener("submit", async (e) => 
 // ==========================
 document.getElementById("loginForm").addEventListener("submit", async (e) => {
   e.preventDefault();
+  e.stopPropagation();
 
   const email = document.getElementById("loginEmail").value.trim();
   const password = document.getElementById("loginPassword").value;
   const selectedRole = document.getElementById("loginRole").value;
 
+  console.log("LOGIN: submit detectado");
+
   try {
     if (!firebaseEnabled || !auth) {
-      updateAuthStatus("Firebase no está listo");
+      updateAuthStatus("Firebase no está listo", email, "—", "—");
+      showMessage("Firebase no está listo.");
       return;
     }
 
     const { signInWithEmailAndPassword } = window._firebaseModules;
 
-    console.log("Intentando iniciar sesión con:", email);
-
+    console.log("LOGIN: intentando auth");
     const userCred = await signInWithEmailAndPassword(auth, email, password);
-    console.log("Login OK:", userCred.user.uid);
+    console.log("LOGIN: auth exitosa", userCred.user.uid);
 
     const profile = await getUserProfile(userCred.user.uid);
-    console.log("Perfil leído:", profile);
+    console.log("LOGIN: perfil", profile);
 
     if (!profile) {
       updateAuthStatus("No existe perfil", email, "—", "—");
+      showMessage("Sí inició sesión, pero no existe perfil en Firestore.");
       return;
     }
 
     if (profile.role !== selectedRole) {
       updateAuthStatus("Rol incorrecto", email, profile.role || "—", "—");
+      showMessage("El rol seleccionado no coincide con tu cuenta.");
       return;
     }
 
@@ -1430,6 +1435,9 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     await loadAppointmentsForCurrentUser();
     await loadPetsForCurrentUser();
     await updateAdminVisibility();
+
+    showMessage("Sesión iniciada correctamente");
+    location.hash = "#login";
 
   } catch (error) {
     console.error("ERROR LOGIN:", error);
