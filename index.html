@@ -1299,18 +1299,30 @@ if (firebaseEnabled && auth) {
   const { onAuthStateChanged } = window._firebaseModules;
 
   onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      await updateAdminVisibility();
-    } else {
-      document.getElementById("admin").style.display = "none";
-    }
-  });
-}
+    console.log("AUTH STATE CHANGED:", user ? user.email : "sin sesión");
 
-  onAuthStateChanged(auth, async (user) => {
     if (user) {
-      await updateAdminVisibility();
+      try {
+        const profile = await getUserProfile(user.uid);
+        currentUserProfile = profile;
+
+        const admin = await isAdmin(user.uid);
+
+        updateAuthStatus(
+          profile ? "Sesión activa" : "Sesión activa pero sin perfil",
+          user.email || "—",
+          profile?.role || "—",
+          admin ? "Administrador" : "Usuario"
+        );
+
+        await loadAppointmentsForCurrentUser();
+        await loadPetsForCurrentUser();
+        await updateAdminVisibility();
+      } catch (error) {
+        console.error("Error en onAuthStateChanged:", error);
+      }
     } else {
+      updateAuthStatus("No autenticado", "—", "—", "—");
       document.getElementById("admin").style.display = "none";
     }
   });
